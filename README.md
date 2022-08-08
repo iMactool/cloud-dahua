@@ -8,7 +8,7 @@
 ## Installing
 
 ```shell
-$ composer require imactool/dahuacloud -vvv
+$ composer require imactool/dahua-cloud -vvv
 ```
 
 
