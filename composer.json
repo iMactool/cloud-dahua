@@ -1,0 +1,20 @@
+{
+    "name": "imactool\/dahuaCloud",
+    "description": "大华云睿",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "weslee",
+            "email": "chinauser1208@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.5",
+        "symfony/cache": "^4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Imactool\\DahuaCloud\\": "src"
+        }
+    }
+}
