@@ -237,7 +237,7 @@
         {
             $params['photoUrl'] = $photoUrl;
             try {
-                return  $this->basePost("/gateway/rivers/oss/newPath",$params);
+                return  $this->get("/gateway/rivers/oss/newPath",$params);
             }catch (BadResponseException $e){
                 return $e->getMessage();
             }

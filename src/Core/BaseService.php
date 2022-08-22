@@ -128,7 +128,9 @@ class BaseService
      */
     public function get($endpoint, $query = [], $headers = [])
     {
-//        $query = $this->generateParams($endpoint, $query);
+        if ($this->clodEntry){
+            $headers = $this->generateCloudHeader($headers);
+        }
         return $this->httpClient()->request('get', $endpoint, [
             'headers' => $headers,
             'query'   => $query,
