@@ -224,7 +224,7 @@ class BaseService
             $headers = $this->generateCloudHeader($headers);
         }
         $options = [
-            'form_params'=> $params,
+            'body'      => json_encode($params),
             'headers'    => $headers
         ];
         return $this->httpClient()->request('PUT',$endpoint,$options);
