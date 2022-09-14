@@ -41,4 +41,17 @@ class Auth extends BaseService
         }
     }
 
+    /**
+     * 获取云睿平台配置
+     * @return mixed
+     *              返回值：
+     *               androidCode Android安全码
+     *               iosCode iOS安全码
+     *               realmName 视频播放初始化所需环境
+     * @author cc
+     */
+    public function getLechangeConfig()
+    {
+        return $this->getJson('/gateway/membership/api/common/getLechangeConfig');
+    }
 }
