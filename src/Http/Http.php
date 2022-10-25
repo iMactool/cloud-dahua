@@ -59,8 +59,7 @@ class Http
 
     public function setUrl($url)
     {
-        $this->baseUri = trim($url, '/').'/';
-
+        $this->baseUri = trim($url, '/');
         return $this;
     }
 

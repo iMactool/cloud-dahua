@@ -1,8 +1,12 @@
 <h1 align="center"> dahuacloud </h1>
 
-<p align="center"> <a href="https://www.cloud-dahua.com/wiki" target="_blank">大华云睿开放平台</a> </p>
+<p align="center"> <a href="https://www.cloud-dahua.com/wiki" target="_blank">大华云睿开放平台</a> 、<a href="https://open.imou.com/book/start.html" target="_blank"> 乐橙开放平台开发</a> </p>
 
-> 需要先熟悉大华云睿开放平台的文档 https://www.cloud-dahua.com/wiki
+> 需要先熟悉大华云睿开放平台的文档 https://www.cloud-dahua.com/wiki 
+
+或
+> 乐橙开放平台开发文档 https://open.imou.com/book/start.html
+
 > 没有特别说明的接口，则需按照文档传递
 
 ## Installing
@@ -14,6 +18,7 @@ $ composer require imactool/dahua-cloud -vvv
 
 ## Usage
 
+### 大华云睿使用方式
 ```php
 
     require __DIR__ .'/vendor/autoload.php';
@@ -110,6 +115,35 @@ $ composer require imactool/dahua-cloud -vvv
     
 
 
+```
+
+### 乐橙开放平台使用方式
+```php
+	require __DIR__ .'/vendor/autoload.php';
+	use Imactool\DahuaCloud\Imou;
+
+	$config =[
+		'appId' => '', // 乐橙 appId，控制台-我的应用-应用信息中获取
+		'appSecret' => '', // 乐橙 appSecret
+	];
+
+	$imou = new Imou($config);
+
+ 
+
+	$params = [
+		'deviceId' => '11111'
+	];
+ 	$res = $imou->LcDevice->unBindDeviceInfo($params);
+ 	var_dump($res);
+
+	//绑定
+	$params = [
+		'deviceId' => '11111',
+		'code'     => ''
+	];
+	$res = $imou->LcDevice->bindDevice($params);
+ 	var_dump($res);
 ```
 
 更多方法，请看源文件（可以使用 请求地址进行搜索匹配接口）

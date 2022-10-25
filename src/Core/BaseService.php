@@ -23,14 +23,14 @@ class BaseService
     protected static $config;
     protected $clodEntry = true; //大华云睿应用入口
     protected $cloud_access_token;
+    protected $cloud_imou_token;
+    public    $nowApp;
 
     public function __construct(Container $app)
     {
         $this->app = $app;
-//        $InterfacEntry = get_class($app);
-//        if ($InterfacEntry == "Imactool\\DahuaCloud\\Cloud"){
-//            $this->clodEntry = true;
-//        }
+        $class = get_class($this->app);
+        $this->nowApp = basename(str_replace('\\','/',$class));
         $this->setConfig($app->getConfig());
     }
 
@@ -99,9 +99,12 @@ class BaseService
 
     protected function getUrl()
     {
-        if ($this->clodEntry){
-            return "https://www.cloud-dahua.com";
-        }else{
+
+        if ($this->nowApp =='Cloud'){
+            return "https://www.cloud-dahua.com"; //大华云睿
+        }else if($this->nowApp == 'Imou'){
+            return "https://openapi.lechange.cn"; //乐橙
+        } else{ //大华ICC、H8900平台
             return  self::$config['scheme'].'://'.self::$config['ip'].':'.self::$config['port'];
         }
 
@@ -109,11 +112,11 @@ class BaseService
 
     public function httpClient()
     {
+
         if (!self::$client) {
             self::$client = new Http();
             self::$client->setUrl($this->getUrl());
         }
-
         return self::$client;
     }
 
@@ -128,8 +131,10 @@ class BaseService
      */
     public function get($endpoint, $query = [], $headers = [])
     {
-        if ($this->clodEntry){
+        if ($this->nowApp =='Cloud'){
             $headers = $this->generateCloudHeader($headers);
+        }else if($this->nowApp == 'Imou'){
+
         }
         return $this->httpClient()->request('get', $endpoint, [
             'headers' => $headers,
@@ -174,9 +179,36 @@ class BaseService
      */
     public function postJosn($endpoint, $params = [], $headers = [])
     {
-        if ($this->clodEntry){
+        if ($this->nowApp =='Cloud'){
             $headers = $this->generateCloudHeader($headers);
+        }else if($this->nowApp == 'Imou'){
+            $sysParams = $this->imouSystemParams();
+            $params = array_merge($sysParams,['params'=>\json_encode($params,JSON_FORCE_OBJECT)]);
         }
+        return $this->httpClient()->request('post', $endpoint, [
+            'headers' => $headers,
+            'json'    => $params,
+//            'debug'   => true
+        ]);
+    }
+
+    /**
+     * 乐橙api 请求 专用
+     * @see https://open.imou.com/book/http/develop.html
+     * @param       $endpoint
+     * @param array $params
+     * @param array $headers
+     *
+     * @return mixed
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @author cc
+     */
+    public function postApiJson($endpoint, $params = [], $headers = [])
+    {
+        $sysParams = $this->imouSystemParams();
+        $params = array_merge($sysParams,['params'=>\json_encode($params,JSON_FORCE_OBJECT)]);
+        $data   = $this->requestImouAccessToken();
+        $params['token'] = $data['accessToken'];
         return $this->httpClient()->request('post', $endpoint, [
             'headers' => $headers,
             'json'    => $params,
@@ -195,7 +227,7 @@ class BaseService
      */
     public function getJson($endpoint, $params = [], $headers = [])
     {
-        if ($this->clodEntry){
+        if ($this->nowApp =='Cloud'){
             $headers = $this->generateCloudHeader($headers);
         }
         return $this->httpClient()->request('get', $endpoint, [
@@ -208,7 +240,7 @@ class BaseService
 
     public function deleteJson($endpoint, $params = [], $headers = [])
     {
-        if ($this->clodEntry){
+        if ($this->nowApp =='Cloud'){
             $headers = $this->generateCloudHeader($headers);
         }
         $options = [
@@ -220,7 +252,7 @@ class BaseService
 
     public function putJson($endpoint, $params = [], $headers = [])
     {
-        if ($this->clodEntry){
+        if ($this->nowApp =='Cloud'){
             $headers = $this->generateCloudHeader($headers);
         }
         $options = [
@@ -244,6 +276,28 @@ class BaseService
         }else{
             return $this->cloudApiHeader();
         }
+    }
+
+    /**
+     * 乐橙开放平台HTTP公共请求参数
+     * @see https://open.imou.com/book/http/develop.html
+     * @return array
+     * @author cc
+     */
+    public function imouSystemParams()
+    {
+        $time = time();
+        $nonce = $this->randString(32);
+        return [
+            'system' => [
+                'ver'   => '1.0',
+                'sign'  => $this->imouSign($time,$nonce),
+                'appId' => self::$config['appId'],
+                'time'  => $time,
+                'nonce' => $nonce
+            ],
+            'id'    => date('Y-m-d-H-i-s').'-'.microtime(true)
+        ];
     }
 
 
@@ -289,6 +343,79 @@ class BaseService
             'scope'         => 'server'
         ];
         return  $this->basePost("/gateway/auth/oauth/token",$params);
+    }
+
+    /**
+     * 乐橙 accessToken：获取管理员token
+     * 根据管理员账号appId和appSecret获取accessToken，appId和appSecret可以在控制台-我的应用-应用信息中找到。
+     * @see https://open.imou.com/book/http/accessToken.html
+     * @return mixed|void
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @author cc
+     */
+    public function requestImouAccessToken()
+    {
+        $cacheKey = $this->getLcCacheKey(self::$config);
+        $accessToken = CacheAdapter::getInstance()->getItem($cacheKey);
+        if (!$accessToken->isHit()) {
+            echo "没有命中缓存~";
+            $result = $this->refreshImouAccessToken();
+            $result = \json_decode($result,true);
+            var_dump($result);
+            if (!empty($result) && (int)$result['result']['code'] === 0) {
+                $data = $result['result']['data'];
+                $this->cloud_imou_token = $data['accessToken'];
+                $accessToken->set($data);
+                $accessToken->expiresAfter((int) $data['expireTime'] - 3);
+                CacheAdapter::getInstance()->save($accessToken);
+                return $data;
+            }
+            return $result;
+        } else {
+            echo "命中缓存~!!!";
+            return $accessToken->get();
+        }
+    }
+
+    public function refreshImouAccessToken()
+    {
+        return $this->postJosn('/openapi/accessToken');
+    }
+
+    /**
+     * 乐橙 HTTP鉴权摘要算法
+     * @see https://open.imou.com/book/http/develop.html
+     * @param $time 时间戳
+     * @param $nonce  随机字符串
+     * @return string
+     * @author cc
+     */
+    public function imouSign($time,$nonce)
+    {
+        $appSecret = self::$config['appSecret'];
+        $singStr = "time:$time,nonce:$nonce,appSecret:$appSecret";
+        return md5($singStr);
+    }
+
+    /**
+     * 生成随机字符串
+     *
+     * @access public
+     * @param integer $length 字符串长度
+     * @param string $specialChars 是否有特殊字符
+     * @return string
+     */
+    public  function randString($length, $specialChars = false) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        if ($specialChars) {
+            $chars .= '!@#$%^&*()';
+        }
+        $result = '';
+        $max = strlen($chars) - 1;
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $chars[rand(0, $max)];
+        }
+        return $result;
     }
 
 }

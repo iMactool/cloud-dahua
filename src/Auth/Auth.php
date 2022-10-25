@@ -54,4 +54,15 @@ class Auth extends BaseService
     {
         return $this->getJson('/gateway/membership/api/common/getLechangeConfig');
     }
+
+    /**
+     * 乐橙
+     * accessToken：获取管理员token
+     * 根据管理员账号appId和appSecret获取accessToken，appId和appSecret可以在控制台-我的应用-应用信息中找到。
+     * @author cc
+     */
+    public function getImouAccessToken()
+    {
+        return $this->postJosn('/openapi/accessToken');
+    }
 }
