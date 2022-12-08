@@ -26,6 +26,25 @@ use Imactool\DahuaCloud\Person\PersonProvider;
 use Imactool\DahuaCloud\Support\Config;
 use Imactool\DahuaCloud\Visitor\VisitorProvider;
 
+/**
+ * Class Cloud
+ *
+ * @property AuthProvider       $Auth
+ * @property DeviceProvider     $Device
+ * @property OrgProvider        $Org
+ * @property AccountProvider    $Account
+ * @property BuildingProvider   $Building
+ * @property MixProvider        $Mix
+ * @property AscProvider        $Asc
+ * @property PersonProvider     $Person
+ * @property VisitorProvider    $Visitor
+ * @property MsgProvider        $Msg
+ * @property LiveProvider       $Live
+ * @property MixedProvider      $Mixed
+ *
+ * @package Imactool\DahuaCloud
+ * @version 1.0.0
+ */
 class Cloud extends ContainerBase
 {
     protected $config;

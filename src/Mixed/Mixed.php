@@ -101,7 +101,7 @@
          */
         public function aiHeatMap(array $params)
         {
-            return $this->postJosn('/gateway/passengerflow/api/aiAreaFlow',$params);
+            return $this->postJosn('/gateway/passengerflow/api/aiHeatMap',$params);
         }
 
         /**

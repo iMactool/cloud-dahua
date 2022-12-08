@@ -13,6 +13,16 @@ namespace Imactool\DahuaCloud\Auth;
 use Imactool\DahuaCloud\Core\Container;
 use Imactool\DahuaCloud\Interfaces\Provider;
 
+/**
+ * Class AuthProvider
+ *
+ * @method getAccessToken()
+ * @method getLechangeConfig()
+ * @method getImouAccessToken()
+ *
+ * @package Imactool\DahuaCloud\Auth
+ * @version 1.0.0
+ */
 class AuthProvider implements Provider
 {
     public function serviceProvider(Container $container)
