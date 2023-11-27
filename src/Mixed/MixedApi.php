@@ -13,13 +13,13 @@
 	use GuzzleHttp\Exception\BadResponseException;
     use Imactool\DahuaCloud\Core\BaseService;
 
-    class Mixed extends BaseService
+    class MixedApi extends BaseService
 	{
         /**
          *  AI -> 根据任务id获取相关信息
          * @param $taskId
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function getAinfoByTaskId($taskId)
@@ -32,7 +32,7 @@
          * 微信管理 -> 根据微信授权码code获取openid
          * @param $code
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function getWxOpenidByCode($code)
@@ -45,7 +45,7 @@
          * 微信管理 -> 获取微信签名
          * @param $code
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function getWxSignature($url)
@@ -58,7 +58,7 @@
          * 流媒体相关 -> 获取乐橙userToken
          * @param $code
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function getLeChengUserToken()
@@ -70,7 +70,7 @@
          * 单点登录 -> 免密登陆接口
          * @param $code
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function userToken($telephone)
@@ -84,7 +84,7 @@
          *  AI热度分析 -> 区域客流热度数据
          * @param $code
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function aiAreaFlow(array $params)
@@ -96,7 +96,7 @@
          *  AI热度分析 -> AI热度图绘制数据接口
          * @param $code
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function aiHeatMap(array $params)
@@ -108,7 +108,7 @@
          *  视频追溯 -> 上传视频追溯单据
          * @param array $params
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function videoUploadTicket(array $params)
@@ -120,7 +120,7 @@
          *  物流追溯 -> 上传物流单据
          * @param array $params
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function wlOrderUpload(array $params)
@@ -132,7 +132,7 @@
          * 收银监督子系统 -> 上传小票数据
          * @param array $params
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function postTicketUpload(array $params)
@@ -144,7 +144,7 @@
          * 收银监督子系统 -> 删除pos机和通道关联关系
          * @param array $params
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function deletePosDevChannelRel(array $params)
@@ -156,7 +156,7 @@
          * 收银监督子系统 -> 添加pos机和通道绑定关系
          * @param array $params
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function addPosDevChannelRel(array $params)
@@ -168,7 +168,7 @@
          * 巡检考评子系统 -> 上传事件考评图片
          * @param string $pictureBase64 图片base64编码
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function captureEvaluation(string $pictureBase64)
@@ -181,7 +181,7 @@
          * 巡检考评子系统 -> 处理事件考评
          * @param string $messageId
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function evaluationMessage(string $messageId)
@@ -193,7 +193,7 @@
          * 巡检考评子系统 -> 店铺员工复议
          * @param array $params
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function onlineQuestion(array $params)
@@ -205,7 +205,7 @@
          * 巡检考评子系统 -> 查询事件考评详情
          * @param string $messageId
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function evaluationMessageInfo(string $messageId)
@@ -216,7 +216,7 @@
 
         /**
          *  基础功能 -> 文件上传
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function getStoreMap()
@@ -230,7 +230,7 @@
          * 刷新OSS图片有效期
          * @param string $photoUrl
          *
-         * @return mixed|string
+         *  @return mixed|string
          * @author cc
          */
         public function refreshOssImg(string $photoUrl)
@@ -247,7 +247,7 @@
          * 查询通道是否开通云存储
          * @param $devChnIds
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function getStorageStrategy($devChnIds)
@@ -259,7 +259,7 @@
          * 可视对讲 - 纯云app注册sip
          * @param $phone
          *
-         * @return mixed
+         *  @return mixed
          * @author cc
          */
         public function registerChunYunSip($phone)

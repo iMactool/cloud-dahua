@@ -319,14 +319,17 @@ class BaseService
     public function getCloudAccessToken()
     {
         $cacheKey = $this->getCacheKey(self::$config);
-        $accessToken = CacheAdapter::getInstance()->getItem($cacheKey);
+        $accessToken = self::getInstance()->getItem($cacheKey);
         if (!$accessToken->isHit()) {
             $result = $this->refreshCloudAccessToken();
             if (!empty($result)) {
+                if (!$result['success']){
+                   throw new \Exception($result['code'].' '.$result['errMsg']);
+                }
                 $this->cloud_access_token = $result['access_token'];
                 $accessToken->set($result);
                 $accessToken->expiresAfter((int) $result['expires_in'] - 3);
-                CacheAdapter::getInstance()->save($accessToken);
+                self::getInstance()->save($accessToken);
                 return $result;
             }
         } else {
@@ -356,18 +359,17 @@ class BaseService
     public function requestImouAccessToken()
     {
         $cacheKey = $this->getLcCacheKey(self::$config);
-        $accessToken = CacheAdapter::getInstance()->getItem($cacheKey);
+        $accessToken = self::getInstance()->getItem($cacheKey);
         if (!$accessToken->isHit()) {
             echo "没有命中缓存~";
             $result = $this->refreshImouAccessToken();
             $result = \json_decode($result,true);
-            var_dump($result);
             if (!empty($result) && (int)$result['result']['code'] === 0) {
                 $data = $result['result']['data'];
                 $this->cloud_imou_token = $data['accessToken'];
                 $accessToken->set($data);
                 $accessToken->expiresAfter((int) $data['expireTime'] - 3);
-                CacheAdapter::getInstance()->save($accessToken);
+                self::getInstance()->save($accessToken);
                 return $data;
             }
             return $result;

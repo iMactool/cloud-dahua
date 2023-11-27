@@ -18,7 +18,7 @@
         public function serviceProvider (Container $container)
         {
             $container['Mixed'] = function ($container) {
-                return new Mixed($container);
+                return new MixedApi($container);
             };
         }
     }
